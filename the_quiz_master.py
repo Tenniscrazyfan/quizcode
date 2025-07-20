@@ -1,5 +1,6 @@
 import pgzrun
 
+
 WIDTH = 800
 HEIGHT = 600
 
@@ -22,7 +23,7 @@ gameover = False
 q = ""
 
 def draw():
-    global q
+    global q, times
     screen.fill("Black")
     screen.draw.filled_rect(q_box,"Blue")
     screen.draw.filled_rect(timer,"Blue")
@@ -34,9 +35,24 @@ def draw():
     screen.draw.textbox(q[0].strip(),q_box,color = "White")
     index = 1
     for abox in answers:
-        screen.draw.textbox(q[index],abox,color = "White")
+        screen.draw.textbox(q[index].strip(),abox,color = "White")
         index = index + 1
+    if gameover == True :
+        q = [" It is wrong", "-" ,"-","-","-",5]
+        times  = 0
 
+
+
+
+def time() :
+    global times,gameover
+    if gameover == False :
+
+        times = times- 1
+    
+
+
+clock.schedule_interval(time,1)
 
 def read_question_file():
     global questions
@@ -52,18 +68,30 @@ def readquestion():
     return questions.pop(0).split(",")
 
 def on_mouse_down(pos):
-    global q, questions
+    global q, questions,gameover,times
     index = 1
     for abox in answers:
         if abox.collidepoint(pos):
             if index == int(q[5]):
                 q = readquestion()
+                times = 10
                 print(q)
             else:
-                print("wrong")
+                gameover = True
         index = index + 1
-            
+    if skipbox.collidepoint(pos):
+       skip_question()
+
+def skip_question():
+     global q, times
+     if gameover == False:
+        q = readquestion()
+        times = 10
+
+
 read_question_file()
 q = readquestion() 
+
+
 
 pgzrun.go()
